@@ -100,6 +100,30 @@ def execute():
         elif opcode == 3:
             print('div r{}, r{}, r{}' .format(r_dest, r_op1, r_op2))
             regs[r_dest] = regs[r_op1] / regs[r_op2]
+
+        # cmp_equal
+        elif opcode == 4:
+            print('cmp_equal r{}, r{}, r{}' .format(r_dest, r_op1, r_op2))
+            regs[r_dest] = 1 if regs[r_op1] == regs[r_op2] else 0
+        
+        # cmp_neq
+        elif opcode == 5:
+            print('cmp_neq r{}, r{}, r{}' .format(r_dest, r_op1, r_op2))
+            regs[r_dest] = 1 if regs[r_op1] != regs[r_op2] else 0
+
+        # load
+        elif opcode == 15:
+            print('load r{}, r{}, r{}' .format(r_dest, r_op1, r_op2))
+            regs[r_dest] = memory[regs[r_op1]]
+        
+        # store
+        elif opcode == 16:
+            print('store r{}, r{}, r{}' .format(r_dest, r_op1, r_op2))
+            memory[regs[r_op1]] = regs[r_op2]
+
+        else:
+            cpu_alive = False
+
     elif decoded_inst['type'] == 1:
         opcode = decoded_inst['opcode']
         i_imed = decoded_inst['i_imed']
@@ -109,6 +133,17 @@ def execute():
         if opcode == 0:
             print('jump {}' .format(i_imed))
             reg_pc = i_imed
+
+        # jump_cond
+        elif opcode == 1:
+            print('jump_cond r{}, {}' .format(i_reg, i_imed))
+            reg_pc = i_imed if regs[i_reg] == 1 else reg_pc
+            print('jump_cond, reg_pc = {}' .format(reg_pc))
+        
+        # mov
+        elif opcode == 3:    
+            print('mov r{}, {}' .format(i_reg, i_imed))
+            regs[i_reg] = i_imed
 
         else:
             print('opcode {}' .format(opcode))
